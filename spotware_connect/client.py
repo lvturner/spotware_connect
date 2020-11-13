@@ -2,6 +2,7 @@ from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import clientFromString
 from twisted.application.internet import ClientService
 from twisted.internet import reactor
+from twisted.internet import task
 from .protocol import Protocol
 from .protobuf import Protobuf
 
@@ -47,8 +48,12 @@ class Client(ClientService):
         super().__init__(endpoint, factory, retryPolicy=retryPolicy,
                          clock=clock, prepareConnection=prepareConnection)
 
-    def start(self, timeout=None):
+    def start(self, timeout=None, ui=None):
         self.startService()
+
+        if ui:
+            t = task.LoopingCall(ui)
+            t.start(0)
 
         if timeout:
             reactor.callLater(timeout, self.stop)
