@@ -53,7 +53,7 @@ class Client(ClientService):
 
         if ui:
             t = task.LoopingCall(ui)
-            t.start(0)
+            t.start(0.01)
 
         if timeout:
             reactor.callLater(timeout, self.stop)
